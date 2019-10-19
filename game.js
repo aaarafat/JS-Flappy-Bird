@@ -11,16 +11,20 @@
             break;
         case state.gameOver :
             state.curr = state.getReady;
+            bird.speed = 0;
             bird.y = 100;
             pipe.pipes=[];
-            score = 0;
+            UI.score.curr = 0;
             break;
     }
  })
- sctx.fillStyle = "#30c0df";
+
  let frames = 0;
  let dx = 2;
- let score = 0;
+ const score = {
+     curr : 0,
+     best : 0
+ }
  const state = {
      curr : 0,
      getReady : 0,
@@ -83,9 +87,11 @@
          this.pipes.forEach(pipe=>{
              pipe.x -= dx;
          })
+
          if(this.pipes.length&&this.pipes[0].x < -this.top.sprite.width)
          {
-             this.pipes.shift();
+            this.pipes.shift();
+            UI.score.curr++;
          }
 
      }
@@ -129,13 +135,14 @@
                 this.setRotation()
                 this.speed += this.gravity;
                 if(this.y + r  >= gnd.y||this.collisioned())
+                {
                     state.curr = state.gameOver;
+                }
                 
                 break;
             case state.gameOver : 
                 this.frame = 1;
                 if(this.y + r  < gnd.y) {
-                    console.log(this.y+r,gnd.y,this.speed,this.gravity);
                     this.y += this.speed;
                     this.setRotation()
                     this.speed += this.gravity*2;
@@ -192,6 +199,10 @@
  const UI = {
     getReady : {sprite : new Image()},
     gameOver : {sprite : new Image()},
+    score : {
+        curr : 0,
+        best : 0,
+    },
     draw : function() {
         switch (state.curr) {
             case state.getReady :
@@ -203,7 +214,32 @@
         }
         y = parseFloat(scrn.height-curr.sprite.height)/2;
         x = parseFloat(scrn.width-curr.sprite.width)/2;
-        sctx.drawImage(curr.sprite,x,y);
+        if(state.curr!=state.Play)sctx.drawImage(curr.sprite,x,y);
+        this.drawScore();
+    },
+    drawScore : function() {
+            sctx.fillStyle = "#FFFFFF";
+            sctx.strokeStyle = "#000000";
+        switch (state.curr) {
+            case state.Play :
+                sctx.lineWidth = "2";
+                sctx.font = "35px Squada One";
+                sctx.fillText(this.score.curr,scrn.width/2,50);
+                sctx.strokeText(this.score.curr,scrn.width/2,50);
+                break;
+            case state.gameOver :
+                    this.score.best = Math.max(this.score.curr,localStorage.getItem("best"));
+                    localStorage.setItem("best",this.score.best);
+                    sctx.lineWidth = "2";
+                    sctx.font = "40px Squada One";
+                    let sc = `SCORE :     ${this.score.curr}`
+                    let bs = `BEST  :     ${this.score.best}`
+                    sctx.fillText(sc,scrn.width/2-80,scrn.height/2);
+                    sctx.strokeText(sc,scrn.width/2-80,scrn.height/2);
+                    sctx.fillText(bs,scrn.width/2-80,scrn.height/2+30);
+                    sctx.strokeText(bs,scrn.width/2-80,scrn.height/2+30);
+                break;
+        }
     }
 
  };
@@ -239,12 +275,12 @@ gameLoop();
  }
  function draw()
  {
+    sctx.fillStyle = "#30c0df";
     sctx.fillRect(0,0,scrn.width,scrn.height)
     bg.draw();
     pipe.draw();
     gnd.draw();
     bird.draw();
-    if(state.curr != state.Play)
-        UI.draw();
+    UI.draw();
  }
 
