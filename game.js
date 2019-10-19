@@ -1,3 +1,4 @@
+ const RAD = Math.PI/180;
  const scrn = document.getElementById('canvas');
  const sctx = scrn.getContext("2d");
  scrn.addEventListener("click",()=>{
@@ -10,7 +11,6 @@
             break;
         case state.gameOver :
             state.curr = state.getReady;
-            bird.y = 100;
             break;
     }
  })
@@ -70,31 +70,42 @@
             {sprite : new Image()},
             {sprite : new Image()},
         ],
-    x : 13,
+    rotatation : 0,
+    x : 50,
     y :100,
     speed : 0,
-    gravity : .25,
+    gravity : .125,
+    thrust : 3.6,
     frame:0,
     draw : function() {
-        sctx.drawImage(this.animations[this.frame].sprite,this.x,this.y);
+        let h = this.animations[this.frame].sprite.height;
+        let w = this.animations[this.frame].sprite.width;
+        sctx.save();
+        sctx.translate(this.x,this.y);
+        sctx.rotate(this.rotatation*RAD);
+        sctx.drawImage(this.animations[this.frame].sprite,-w/2,-h/2);
+        sctx.restore();
     },
     update : function() {
-        
+        console.log(this.speed ,this.rotatation);
         switch (state.curr) {
             case state.getReady :
+                bird.y = 100;
+                this.rotatation = 0;
                 this.y += (frames%10==0) ? (Math.random()-0.5)*2 : 0;
                 this.frame += (frames%10==0) ? 1 : 0;
                 break;
             case state.Play :
                 this.frame += (frames%5==0) ? 1 : 0;
                 this.y += this.speed;
+                this.setRotation()
                 this.speed += this.gravity;
-                let r = parseFloat( this.animations[0].sprite.height);
-                console.log(r);
+                let r = parseFloat( this.animations[0].sprite.width)/2;
                 if(this.y + r  >= gnd.y)
                     state.curr = state.gameOver;
                 break;
             case state.gameOver :
+                this.rotatation = 90;
                 this.frame = 1;
                 this.speed = 0;
                 break;
@@ -102,7 +113,18 @@
         this.frame = this.frame%this.animations.length;       
     },
     flap : function(){
-        this.speed = -4.6;
+        if(this.y > 0)
+        this.speed = -this.thrust;
+    },
+    setRotation : function(){
+        if(this.speed <= 0)
+        {
+            
+            this.rotatation = Math.max(-25, -25 * this.speed/(-1*this.thrust));
+        }
+        else if(this.speed > 0 ) {
+            this.rotatation = Math.min(90, 90 * this.speed/(this.thrust*2));
+        }
     }
  };
  const UI = {
