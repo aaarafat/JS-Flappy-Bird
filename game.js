@@ -1,5 +1,4 @@
  const RAD = Math.PI/180;
- const dx = 2;
  const scrn = document.getElementById('canvas');
  const sctx = scrn.getContext("2d");
  scrn.addEventListener("click",()=>{
@@ -12,11 +11,14 @@
             break;
         case state.gameOver :
             state.curr = state.getReady;
+            bird.y = 100;
+            pipe.pipes=[];
             break;
     }
  })
  sctx.fillStyle = "#30c0df";
  let frames = 0;
+ let dx = 2;
 
  const state = {
      curr : 0,
@@ -37,7 +39,7 @@
         
         switch (state.curr) {
             case state.getReady :
-                this.x -= dx/2; 
+                this.x -= 1; 
                 break;
             case state.Play :
                 this.x -= dx 
@@ -57,6 +59,33 @@
         y = parseFloat(scrn.height-this.sprite.height);
         sctx.drawImage(this.sprite,this.x,y);
     }
+ };
+ const pipe = {
+     top : {sprite : new Image()},
+     bot : {sprite : new Image()},
+     gap:85,
+     pipes : [],
+     draw : function(){
+        for(let i = 0;i<this.pipes.length;i++)
+        {
+            let p = this.pipes[i];
+            sctx.drawImage(this.top.sprite,p.x,p.y)
+            sctx.drawImage(this.bot.sprite,p.x,p.y+parseFloat(this.top.sprite.height)+this.gap)
+        }
+     },
+     update : function(){
+         if(state.curr!=state.Play) return;
+         if(frames%100==0)
+         {
+            console.log("lol");
+             this.pipes.push({x:parseFloat(scrn.width),y:-210*Math.min(Math.random()+1,1.8)});
+         }
+         this.pipes.forEach(pipe=>{
+             pipe.x -= dx;
+         })
+
+     }
+
  };
  const bird = {
     animations :
@@ -83,12 +112,10 @@
         sctx.restore();
     },
     update : function() {
-        console.log(this.speed ,this.rotatation);
         switch (state.curr) {
             case state.getReady :
-                bird.y = 100;
                 this.rotatation = 0;
-                this.y += (frames%10==0) ? (Math.random()-0.5)*2 : 0;
+                this.y +=(frames%10==0) ? Math.sin(frames*RAD) :0;
                 this.frame += (frames%10==0) ? 1 : 0;
                 break;
             case state.Play :
@@ -144,6 +171,8 @@
 
 gnd.sprite.src="img/ground.png";
 bg.sprite.src="img/BG.png";
+pipe.top.sprite.src="img/toppipe.png";
+pipe.bot.sprite.src="img/botpipe.png";
 UI.getReady.sprite.src="img/getready.png";
 UI.gameOver.sprite.src="img/gameOver.png";
 bird.animations[0].sprite.src="img/bird/b0.png";
@@ -166,11 +195,14 @@ gameLoop();
  {
   bird.update();  
   gnd.update();
+  pipe.update();
+
  }
  function draw()
  {
     sctx.fillRect(0,0,scrn.width,scrn.height)
     bg.draw();
+    pipe.draw();
     gnd.draw();
     bird.draw();
     if(state.curr != state.Play)
