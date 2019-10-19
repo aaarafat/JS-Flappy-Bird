@@ -1,4 +1,5 @@
  const RAD = Math.PI/180;
+ const dx = 2;
  const scrn = document.getElementById('canvas');
  const sctx = scrn.getContext("2d");
  scrn.addEventListener("click",()=>{
@@ -25,32 +26,27 @@
 
  }
  const gnd = {
-    animations :
-    [
-        {sprite : new Image()},
-        {sprite : new Image()},
-    ],
+    sprite : new Image(),
      x : 0,
      y :0,
-     frame : 0,
      draw : function() {
-        this.y = parseFloat(scrn.height-this.animations[this.frame].sprite.height);
-        sctx.drawImage(this.animations[this.frame].sprite,this.x,this.y);
+        this.y = parseFloat(scrn.height-this.sprite.height);
+        sctx.drawImage(this.sprite,this.x,this.y);
      },
      update : function() {
         
         switch (state.curr) {
             case state.getReady :
-                this.frame += (frames%10==0) ? 1 : 0;
+                this.x -= dx/2; 
                 break;
             case state.Play :
-                this.frame += (frames%5==0) ? 1 : 0;
+                this.x -= dx 
                 break;
             case state.gameOver :
                 this.frame = 0;
                 break;
         }
-        this.frame = this.frame%this.animations.length;       
+        this.x = this.x % (this.sprite.width/2);    
     }
  };
  const bg = {
@@ -146,8 +142,7 @@
 
  };
 
-gnd.animations[0].sprite.src="img/ground/g0.png";
-gnd.animations[1].sprite.src="img/ground/g1.png";
+gnd.sprite.src="img/ground.png";
 bg.sprite.src="img/BG.png";
 UI.getReady.sprite.src="img/getready.png";
 UI.gameOver.sprite.src="img/gameOver.png";
