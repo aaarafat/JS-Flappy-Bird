@@ -5,6 +5,7 @@
     switch (state.curr) {
         case state.getReady :
             state.curr = state.Play;
+            SFX.start.play();
             break;
         case state.Play :
             bird.flap();
@@ -15,6 +16,7 @@
             bird.y = 100;
             pipe.pipes=[];
             UI.score.curr = 0;
+            SFX.played=false;
             break;
     }
  })
@@ -27,6 +29,14 @@
      Play : 1,
      gameOver : 2,
 
+ }
+ const SFX = {
+     start : new Audio(),
+     flap : new Audio(),
+     score : new Audio(),
+     hit : new Audio(),
+     die : new Audio(),
+     played : false
  }
  const gnd = {
     sprite : new Image(),
@@ -148,6 +158,10 @@
                 this.speed = 0;
                 this.y=gnd.y-r;
                 this.rotatation=90;
+                if(!SFX.played) {
+                    SFX.die.play();
+                    SFX.played = true;
+                }
                 }
                 
                 break;
@@ -156,7 +170,10 @@
     },
     flap : function(){
         if(this.y > 0)
-        this.speed = -this.thrust;
+        {
+            SFX.flap.play();
+            this.speed = -this.thrust;
+        }
     },
     setRotation : function(){
         if(this.speed <= 0)
@@ -183,6 +200,7 @@
             {
                 if(this.y - r <= roof || this.y + r>= floor)
                 {
+                    SFX.hit.play();
                     return true;
                 }
 
@@ -190,6 +208,7 @@
             else if(pipe.moved)
             {
                 UI.score.curr++;
+                SFX.score.play();
                 pipe.moved = false;
             }
 
@@ -256,7 +275,11 @@ bird.animations[0].sprite.src="img/bird/b0.png";
 bird.animations[1].sprite.src="img/bird/b1.png";
 bird.animations[2].sprite.src="img/bird/b2.png";
 bird.animations[3].sprite.src="img/bird/b0.png";
-
+SFX.start.src = "sfx/start.wav"
+SFX.flap.src = "sfx/flap.wav"
+SFX.score.src = "sfx/score.wav"
+SFX.hit.src = "sfx/hit.wav"
+SFX.die.src = "sfx/die.wav"
 
 gameLoop();
 
@@ -273,7 +296,6 @@ gameLoop();
   bird.update();  
   gnd.update();
   pipe.update();
-
  }
  function draw()
  {
