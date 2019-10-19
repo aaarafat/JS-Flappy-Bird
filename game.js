@@ -4,12 +4,13 @@
     switch (state.curr) {
         case state.getReady :
             state.curr = state.Play;
-            bird.x = bird.x*4;
             break;
         case state.Play :
             bird.flap();
             break;
         case state.gameOver :
+            state.curr = state.getReady;
+            bird.y = 100;
             break;
     }
  })
@@ -90,11 +91,12 @@
                 this.speed += this.gravity;
                 let r = parseFloat( this.animations[0].sprite.height);
                 console.log(r);
-                if(this.y + r  > gnd.y)
+                if(this.y + r  >= gnd.y)
                     state.curr = state.gameOver;
                 break;
             case state.gameOver :
                 this.frame = 1;
+                this.speed = 0;
                 break;
         }
         this.frame = this.frame%this.animations.length;       
