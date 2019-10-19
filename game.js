@@ -13,13 +13,14 @@
             state.curr = state.getReady;
             bird.y = 100;
             pipe.pipes=[];
+            score = 0;
             break;
     }
  })
  sctx.fillStyle = "#30c0df";
  let frames = 0;
  let dx = 2;
-
+ let score = 0;
  const state = {
      curr : 0,
      getReady : 0,
@@ -77,12 +78,15 @@
          if(state.curr!=state.Play) return;
          if(frames%100==0)
          {
-            console.log("lol");
              this.pipes.push({x:parseFloat(scrn.width),y:-210*Math.min(Math.random()+1,1.8)});
          }
          this.pipes.forEach(pipe=>{
              pipe.x -= dx;
          })
+         if(this.pipes.length&&this.pipes[0].x < -this.top.sprite.width)
+         {
+             this.pipes.shift();
+         }
 
      }
 
@@ -112,6 +116,7 @@
         sctx.restore();
     },
     update : function() {
+        let r = parseFloat( this.animations[0].sprite.width)/2;
         switch (state.curr) {
             case state.getReady :
                 this.rotatation = 0;
@@ -123,14 +128,24 @@
                 this.y += this.speed;
                 this.setRotation()
                 this.speed += this.gravity;
-                let r = parseFloat( this.animations[0].sprite.width)/2;
-                if(this.y + r  >= gnd.y)
+                if(this.y + r  >= gnd.y||this.collisioned())
                     state.curr = state.gameOver;
+                
                 break;
-            case state.gameOver :
-                this.rotatation = 90;
+            case state.gameOver : 
                 this.frame = 1;
+                if(this.y + r  < gnd.y) {
+                    console.log(this.y+r,gnd.y,this.speed,this.gravity);
+                    this.y += this.speed;
+                    this.setRotation()
+                    this.speed += this.gravity*2;
+                }
+                else {
                 this.speed = 0;
+                this.y=gnd.y-r;
+                this.rotatation=90;
+                }
+                
                 break;
         }
         this.frame = this.frame%this.animations.length;       
@@ -147,6 +162,30 @@
         }
         else if(this.speed > 0 ) {
             this.rotatation = Math.min(90, 90 * this.speed/(this.thrust*2));
+        }
+    },
+    collisioned : function(){
+        if(!pipe.pipes.length) return;
+        let bird = this.animations[0].sprite;
+        let x = pipe.pipes[0].x;
+        let y = pipe.pipes[0].y;
+        let r = bird.height/4 +bird.width/4;
+        let roof = y + parseFloat(pipe.top.sprite.height);
+        let floor = roof + pipe.gap;
+        let w = parseFloat(pipe.top.sprite.width);
+        if(this.x + r>= x)
+        {
+            if(this.x + r < x + w)
+            {
+                if(this.y - r <= roof || this.y + r>= floor)
+                {
+                    return true;
+                }
+
+            }
+
+            
+                
         }
     }
  };
