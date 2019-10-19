@@ -21,10 +21,6 @@
 
  let frames = 0;
  let dx = 2;
- const score = {
-     curr : 0,
-     best : 0
- }
  const state = {
      curr : 0,
      getReady : 0,
@@ -69,6 +65,7 @@
      top : {sprite : new Image()},
      bot : {sprite : new Image()},
      gap:85,
+     moved: true,
      pipes : [],
      draw : function(){
         for(let i = 0;i<this.pipes.length;i++)
@@ -91,7 +88,7 @@
          if(this.pipes.length&&this.pipes[0].x < -this.top.sprite.width)
          {
             this.pipes.shift();
-            UI.score.curr++;
+            this.moved = true;
          }
 
      }
@@ -189,6 +186,11 @@
                     return true;
                 }
 
+            }
+            else if(pipe.moved)
+            {
+                UI.score.curr++;
+                pipe.moved = false;
             }
 
             
