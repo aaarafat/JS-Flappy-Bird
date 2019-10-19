@@ -47,18 +47,8 @@
         sctx.drawImage(this.sprite,this.x,this.y);
      },
      update : function() {
-        
-        switch (state.curr) {
-            case state.getReady :
-                this.x -= 1; 
-                break;
-            case state.Play :
-                this.x -= dx 
-                break;
-            case state.gameOver :
-                this.frame = 0;
-                break;
-        }
+        if(state.curr != state.Play) return;
+        this.x -= dx;
         this.x = this.x % (this.sprite.width/2);    
     }
  };
@@ -303,8 +293,9 @@ gameLoop();
     sctx.fillRect(0,0,scrn.width,scrn.height)
     bg.draw();
     pipe.draw();
-    gnd.draw();
+    
     bird.draw();
+    gnd.draw();
     UI.draw();
  }
 
