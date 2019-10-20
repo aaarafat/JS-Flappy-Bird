@@ -216,23 +216,24 @@
         curr : 0,
         best : 0,
     },
+    curr : undefined,
     frame : 0,
     draw : function() {
         switch (state.curr) {
             case state.getReady :
-                curr = this.getReady;
+                this.curr = this.getReady;
                 break;
             case state.gameOver :
-                curr = this.gameOver;
+                this.curr = this.gameOver;
                 break;
         }
-        let y = parseFloat(scrn.height-curr.sprite.height)/2;
-        let x = parseFloat(scrn.width-curr.sprite.width)/2;
+        let y = parseFloat(scrn.height-this.curr.sprite.height)/2;
+        let x = parseFloat(scrn.width-this.curr.sprite.width)/2;
         if(state.curr!=state.Play)
         { 
             let tx = parseFloat(scrn.width - this.tap[0].sprite.width)/2;
-            let ty = y + curr.sprite.height- this.tap[0].sprite.height;
-            sctx.drawImage(curr.sprite,x,y);
+            let ty = y + this.curr.sprite.height- this.tap[0].sprite.height;
+            sctx.drawImage(this.curr.sprite,x,y);
             sctx.drawImage(this.tap[this.frame].sprite,tx,ty)
         }
         this.drawScore();
