@@ -249,8 +249,8 @@
             case state.Play :
                 sctx.lineWidth = "2";
                 sctx.font = "35px Squada One";
-                sctx.fillText(this.score.curr,scrn.width/2,50);
-                sctx.strokeText(this.score.curr,scrn.width/2,50);
+                sctx.fillText(this.score.curr,scrn.width/2-5,50);
+                sctx.strokeText(this.score.curr,scrn.width/2-5,50);
                 break;
             case state.gameOver :
                     sctx.lineWidth = "2";
@@ -285,8 +285,8 @@ gnd.sprite.src="img/ground.png";
 bg.sprite.src="img/BG.png";
 pipe.top.sprite.src="img/toppipe.png";
 pipe.bot.sprite.src="img/botpipe.png";
+UI.gameOver.sprite.src="img/go.png";
 UI.getReady.sprite.src="img/getready.png";
-UI.gameOver.sprite.src="img/gameOver.png";
 UI.tap[0].sprite.src="img/tap/t0.png";
 UI.tap[1].sprite.src="img/tap/t1.png";
 bird.animations[0].sprite.src="img/bird/b0.png";
