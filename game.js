@@ -210,10 +210,13 @@
  const UI = {
     getReady : {sprite : new Image()},
     gameOver : {sprite : new Image()},
+    tap : [{sprite : new Image()},
+           {sprite : new Image()}],
     score : {
         curr : 0,
         best : 0,
     },
+    frame : 0,
     draw : function() {
         switch (state.curr) {
             case state.getReady :
@@ -223,9 +226,15 @@
                 curr = this.gameOver;
                 break;
         }
-        y = parseFloat(scrn.height-curr.sprite.height)/2;
-        x = parseFloat(scrn.width-curr.sprite.width)/2;
-        if(state.curr!=state.Play)sctx.drawImage(curr.sprite,x,y);
+        let y = parseFloat(scrn.height-curr.sprite.height)/2;
+        let x = parseFloat(scrn.width-curr.sprite.width)/2;
+        if(state.curr!=state.Play)
+        { 
+            let tx = parseFloat(scrn.width - this.tap[0].sprite.width)/2;
+            let ty = y + curr.sprite.height- this.tap[0].sprite.height;
+            sctx.drawImage(curr.sprite,x,y);
+            sctx.drawImage(this.tap[this.frame].sprite,tx,ty)
+        }
         this.drawScore();
     },
     drawScore : function() {
@@ -246,8 +255,8 @@
                         this.score.best = Math.max(this.score.curr,localStorage.getItem("best"));
                         localStorage.setItem("best",this.score.best);
                         let bs = `BEST  :     ${this.score.best}`;
-                        sctx.fillText(sc,scrn.width/2-80,scrn.height/2);
-                        sctx.strokeText(sc,scrn.width/2-80,scrn.height/2);
+                        sctx.fillText(sc,scrn.width/2-80,scrn.height/2+0);
+                        sctx.strokeText(sc,scrn.width/2-80,scrn.height/2+0);
                         sctx.fillText(bs,scrn.width/2-80,scrn.height/2+30);
                         sctx.strokeText(bs,scrn.width/2-80,scrn.height/2+30);
                     }
@@ -258,6 +267,11 @@
                     
                 break;
         }
+    },
+    update : function() {
+        if(state.curr == state.Play) return;
+        this.frame += (frames % 10==0) ? 1 :0;
+        this.frame = this.frame % this.tap.length;
     }
 
  };
@@ -268,6 +282,8 @@ pipe.top.sprite.src="img/toppipe.png";
 pipe.bot.sprite.src="img/botpipe.png";
 UI.getReady.sprite.src="img/getready.png";
 UI.gameOver.sprite.src="img/gameOver.png";
+UI.tap[0].sprite.src="img/tap/t0.png";
+UI.tap[1].sprite.src="img/tap/t1.png";
 bird.animations[0].sprite.src="img/bird/b0.png";
 bird.animations[1].sprite.src="img/bird/b1.png";
 bird.animations[2].sprite.src="img/bird/b2.png";
@@ -293,6 +309,7 @@ gameLoop();
   bird.update();  
   gnd.update();
   pipe.update();
+  UI.update();
  }
  function draw()
  {
