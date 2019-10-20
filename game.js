@@ -216,25 +216,29 @@
         curr : 0,
         best : 0,
     },
-    curr : undefined,
+    x :0,
+    y :0,
+    tx :0,
+    ty :0,
     frame : 0,
     draw : function() {
         switch (state.curr) {
             case state.getReady :
-                this.curr = this.getReady;
+                this.y = parseFloat(scrn.height-this.getReady.sprite.height)/2;
+                this.x = parseFloat(scrn.width-this.getReady.sprite.width)/2;
+                this.tx = parseFloat(scrn.width - this.tap[0].sprite.width)/2;
+                this.ty = this.y + this.getReady.sprite.height- this.tap[0].sprite.height;
+                sctx.drawImage(this.getReady.sprite,this.x,this.y);
+                sctx.drawImage(this.tap[this.frame].sprite,this.tx,this.ty)
                 break;
             case state.gameOver :
-                this.curr = this.gameOver;
+                this.y = parseFloat(scrn.height-this.gameOver.sprite.height)/2;
+                this.x = parseFloat(scrn.width-this.gameOver.sprite.width)/2;
+                this.tx = parseFloat(scrn.width - this.tap[0].sprite.width)/2;
+                this.ty = this.y + this.gameOver.sprite.height- this.tap[0].sprite.height;
+                sctx.drawImage(this.gameOver.sprite,this.x,this.y);
+                sctx.drawImage(this.tap[this.frame].sprite,this.tx,this.ty)
                 break;
-        }
-        let y = parseFloat(scrn.height-this.curr.sprite.height)/2;
-        let x = parseFloat(scrn.width-this.curr.sprite.width)/2;
-        if(state.curr!=state.Play)
-        { 
-            let tx = parseFloat(scrn.width - this.tap[0].sprite.width)/2;
-            let ty = y + this.curr.sprite.height- this.tap[0].sprite.height;
-            sctx.drawImage(this.curr.sprite,x,y);
-            sctx.drawImage(this.tap[this.frame].sprite,tx,ty)
         }
         this.drawScore();
     },
