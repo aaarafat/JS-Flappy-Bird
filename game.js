@@ -1,6 +1,7 @@
  const RAD = Math.PI/180;
  const scrn = document.getElementById('canvas');
  const sctx = scrn.getContext("2d");
+ scrn.tabIndex = 1;
  scrn.addEventListener("click",()=>{
     switch (state.curr) {
         case state.getReady :
@@ -20,6 +21,31 @@
             break;
     }
  })
+
+ scrn.onkeydown = function keyDown(e) {
+ 	if (e.keyCode == 32 || e.keyCode == 87 || e.keyCode == 38)   // Space Key or W key or arrow up
+ 	{
+ 		switch (state.curr) {
+	        case state.getReady :
+	            state.curr = state.Play;
+	            SFX.start.play();
+	            break;
+	        case state.Play :
+	            bird.flap();
+	            break;
+	        case state.gameOver :
+	            state.curr = state.getReady;
+	            bird.speed = 0;
+	            bird.y = 100;
+	            pipe.pipes=[];
+	            UI.score.curr = 0;
+	            SFX.played=false;
+	            break;
+   		}
+ 	}
+}
+
+
 
  let frames = 0;
  let dx = 2;
