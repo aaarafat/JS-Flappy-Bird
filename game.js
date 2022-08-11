@@ -75,7 +75,7 @@
      update : function() {
         if(state.curr != state.Play) return;
         this.x -= dx;
-        this.x = this.x % (this.sprite.width/2);    
+        this.x = this.x % (this.sprite.width/2);
     }
  };
  const bg = {
@@ -90,7 +90,7 @@
  const pipe = {
      top : {sprite : new Image()},
      bot : {sprite : new Image()},
-     gap:85,
+     gap:123,
      moved: true,
      pipes : [],
      draw : function(){
@@ -132,8 +132,8 @@
     x : 50,
     y :100,
     speed : 0,
-    gravity : .125,
-    thrust : 3.6,
+    gravity : .1,
+    thrust : 3,
     frame:0,
     draw : function() {
         let h = this.animations[this.frame].sprite.height;
@@ -161,9 +161,9 @@
                 {
                     state.curr = state.gameOver;
                 }
-                
+
                 break;
-            case state.gameOver : 
+            case state.gameOver :
                 this.frame = 1;
                 if(this.y + r  < gnd.y) {
                     this.y += this.speed;
@@ -179,10 +179,10 @@
                     SFX.played = true;
                 }
                 }
-                
+
                 break;
         }
-        this.frame = this.frame%this.animations.length;       
+        this.frame = this.frame%this.animations.length;
     },
     flap : function(){
         if(this.y > 0)
@@ -194,7 +194,7 @@
     setRotation : function(){
         if(this.speed <= 0)
         {
-            
+
             this.rotatation = Math.max(-25, -25 * this.speed/(-1*this.thrust));
         }
         else if(this.speed > 0 ) {
@@ -228,8 +228,8 @@
                 pipe.moved = false;
             }
 
-            
-                
+
+
         }
     }
  };
@@ -295,7 +295,7 @@
                         sctx.fillText(sc,scrn.width/2-85,scrn.height/2+15);
                         sctx.strokeText(sc,scrn.width/2-85,scrn.height/2+15);
                     }
-                    
+
                 break;
         }
     },
@@ -328,7 +328,7 @@ SFX.die.src = "sfx/die.wav"
 gameLoop();
 
  function gameLoop()
- { 
+ {
      update();
      draw();
      frames++;
@@ -337,7 +337,7 @@ gameLoop();
 
  function update()
  {
-  bird.update();  
+  bird.update();
   gnd.update();
   pipe.update();
   UI.update();
@@ -348,9 +348,8 @@ gameLoop();
     sctx.fillRect(0,0,scrn.width,scrn.height)
     bg.draw();
     pipe.draw();
-    
+
     bird.draw();
     gnd.draw();
     UI.draw();
  }
-
